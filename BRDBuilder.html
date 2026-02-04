@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Custom Levels</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --accent-purple: #9b5cff;
+            --accent-yellow: #ffd84d;
+            --glow-purple: rgba(155, 92, 255, 0.4);
+            --glow-yellow: rgba(255, 216, 77, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 0% 0%, var(--glow-purple) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, var(--glow-yellow) 0%, transparent 40%);
+            color: white;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .level-panel {
+            width: 420px;
+            max-width: 90%;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+            animation: panelIn 0.6s ease-out;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 3rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            opacity: 0.7;
+            margin: 10px 0 25px;
+        }
+
+        .question-tile {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            text-align: left;
+        }
+
+        .question-tile p {
+            margin: 0 0 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .question-tile input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            color: white;
+        }
+
+        .feedback {
+            margin-top: 8px;
+            color: var(--accent-yellow);
+            font-weight: bold;
+            min-height: 1.2em;
+        }
+
+        .list {
+            text-align: left;
+            font-size: 0.95rem;
+            max-height: 150px;
+            overflow-y: auto;
+            opacity: 0.9;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-action {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* COMPLETE OVERLAY */
+        .complete-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .complete-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes panelIn {
+            from {
+                opacity: 0;
+                transform: scale(0.94) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- BUILDER -->
+    <div class="level-panel" id="builder">
+        <h1>BUILDER</h1>
+        <div class="subtitle">Create questions</div>
+
+        <div class="question-tile">
+            <input id="newQ" placeholder="Question">
+            <input id="newA" placeholder="Answer">
+            <div class="feedback" id="builderFeedback"></div>
+        </div>
+
+        <button class="btn-action" onclick="addQuestion()">Add Question</button>
+
+        <div class="subtitle" style="margin-top:25px">Current Questions</div>
+        <div class="list" id="questionList"></div>
+
+        <div style="margin-top:20px">
+            <button class="btn-action" onclick="importQuestions()">Import</button>
+            <button class="btn-action" onclick="exportQuestions()">Export</button>
+        </div>
+
+        <div class="subtitle" style="font-size:.75rem; opacity:.6; margin-top:10px">
+            This WILL replace any questions currently in the builder.
+            If you have multiple files, merge them before importing.
+        </div>
+
+        <div style="margin-top:25px">
+            <button class="btn-action" onclick="startGame()">Start</button>
+        </div>
+
+        <div style="margin-top:15px">
+            <button class="btn-action" onclick="location.href='CCMenu1.html'">Main Menu</button>
+        </div>
+    </div>
+
+    <!-- GAME -->
+    <div class="level-panel hidden" id="game">
+        <h1 id="levelHeading">LEVEL</h1>
+        <div class="subtitle">Complete the task</div>
+
+        <div class="question-tile">
+            <p id="questionText"></p>
+            <input id="answerInput" placeholder="Type your answer">
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn-action" id="retryBtn">Retry</button>
+            <button class="btn-action" id="submitBtn">Submit</button>
+        </div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="complete-overlay" id="completeOverlay">
+        <div class="level-panel">
+            <h1 id="completeHeading">COMPLETE</h1>
+            <button class="btn-action" onclick="next()">Next</button>
+        </div>
+    </div>
+
+    <script>
+        let questions = {};
+        let current = 1;
+
+        /* BUILDER */
+        function addQuestion() {
+            const q = newQ.value.trim();
+            const a = newA.value.trim();
+            if (!q || !a) {
+                builderFeedback.textContent = "Both fields required.";
+                return;
+            }
+            const id = Object.keys(questions).length + 1;
+            questions[id] = { q, a };
+            newQ.value = newA.value = "";
+            builderFeedback.textContent = "";
+            renderList();
+        }
+
+        function renderList() {
+            questionList.innerHTML = "";
+            Object.values(questions).forEach((x, i) => {
+                questionList.innerHTML += `${i + 1}. ${x.q}<br><span style="opacity:.6">→ ${x.a}</span><br><br>`;
+            });
+        }
+
+        function exportQuestions() {
+            const blob = new Blob([JSON.stringify(questions, null, 2)], { type: "application/json" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = "questions.ccq";
+            a.click();
+        }
+
+        function importQuestions() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.onchange = () => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    questions = JSON.parse(e.target.result);
+                    renderList();
+                };
+                reader.readAsText(input.files[0]);
+            };
+            input.click();
+        }
+
+        function startGame() {
+            if (!questions[1]) return alert("Add at least one question.");
+            builder.classList.add("hidden");
+            game.classList.remove("hidden");
+            load();
+        }
+
+        /* GAME */
+        function load() {
+            levelHeading.textContent = `LEVEL ${current}`;
+            questionText.textContent = questions[current].q;
+            answerInput.value = "";
+            feedback.textContent = "";
+            submitBtn.disabled = false;
+        }
+
+        submitBtn.onclick = () => {
+            if (answerInput.value.trim() === questions[current].a) {
+                completeHeading.textContent = `LEVEL ${current} COMPLETE`;
+                completeOverlay.classList.add("active");
+            } else {
+                feedback.textContent = "Wrong answer. Hit Retry.";
+                submitBtn.disabled = true;
+            }
+        };
+
+        retryBtn.onclick = () => {
+            answerInput.value = "";
+            feedback.textContent = "";
+            submitBtn.disabled = false;
+        };
+
+        function next() {
+            completeOverlay.classList.remove("active");
+            current++;
+            if (!questions[current]) {
+                alert("All questions complete.");
+                location.reload();
+                return;
+            }
+            load();
+        }
+    </script>
+
+</body>
+
+</html>

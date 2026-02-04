@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        :root {
+            --bg-dark: #050505;
+
+            /* 🎨 NEW COLORS */
+            --accent-green: #00ff88;
+            --accent-orange: #ff9f1c;
+
+            --glow-green: rgba(0, 255, 136, .4);
+            --glow-orange: rgba(255, 159, 28, .4);
+
+            --text-gray: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 0% 0%, var(--glow-green) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, var(--glow-orange) 0%, transparent 40%);
+            color: var(--text-gray);
+            font-family: 'Segoe UI', Impact, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 450px;
+            max-width: 95%;
+            margin: 0 auto;
+            height: 100%;
+            padding: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all .3s ease;
+        }
+
+        /* === CREDITS SCREEN === */
+
+        #credits {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 5.2rem;
+            margin: 0 0 15px;
+
+            display: inline-block;
+            padding-right: .15em;
+            padding-left: .05em;
+
+            text-transform: uppercase;
+            font-style: italic;
+
+            background: linear-gradient(to right,
+                    var(--accent-green),
+                    #ffffff,
+                    var(--accent-orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, .2));
+        }
+
+        .credit-block {
+            margin-top: 25px;
+            line-height: 1.8;
+            font-size: 1.25rem;
+            opacity: .9;
+        }
+
+        .credit-block span {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 12px;
+            letter-spacing: 2px;
+        }
+
+        .btn-main {
+            font-size: 2.2rem;
+            padding: 22px;
+            background: rgba(0, 0, 0, .6);
+            border: 2px solid #444;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-top: 45px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, .05);
+        }
+
+        .btn-main:hover {
+            transform: scale(1.08);
+            border-color: var(--accent-green);
+            box-shadow: 0 0 40px var(--glow-green);
+        }
+
+        .special-card {
+            margin-top: 30px;
+            padding: 18px 25px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid var(--accent-orange);
+            border-radius: 12px;
+            font-size: 1rem;
+            line-height: 1.5;
+            opacity: 0.85;
+            max-width: 90%;
+        }
+
+        /* screen system preserved */
+        .screen {
+            position: absolute;
+            inset: 0;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .35s ease;
+        }
+
+        .screen.active {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(.94)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1)
+            }
+        }
+
+        .active.zoom {
+            animation: zoomIn .4s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div id="credits" class="screen active zoom">
+            <h1>Credits</h1>
+
+            <div class="credit-block">
+                Thanks for playing<br>
+                You completed all 25 levels
+
+                <span>BRD_VR</span>
+                Game Design • Logic • UI
+            </div>
+
+            <div class="special-card">
+                <strong>Special Input Commands:</strong><br>
+                <ul>
+                    <li><strong>BRDPrev</strong> — Move back one level</li>
+                    <li><strong>BRDNext</strong> — Skip forward one level</li>
+                    <li><strong>BRDSkip##</strong> — Jump to a specific level </li>
+                    <li>Example: <em>BRDSkip5</em> goes to Level 5</li>
+                </ul>
+                <small style="opacity:0.7;">Type these into the answer box and hit submit.</small>
+                <br>
+                <small style="opacity:0.7;">These are your secret tools—use them wisely!</small>
+            </div>
+            <button class="btn-main" onclick="location.href='CCMenu1.html'">
+                Main Menu
+            </button>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

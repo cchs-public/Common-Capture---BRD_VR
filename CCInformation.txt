@@ -1,0 +1,33 @@
+Common Capture — BRD_VR
+
+- Current Version: 2.3.2
+- Last Update: 1/21/2026
+- Level Count: 25 / 25
+
+About the Game
+- Simple question-based progression game
+- Focused on American history & milestones
+- Starts with Christopher Columbus
+- Ends with the first iPhone release
+- Designed to move forward one level at a time
+
+Special Input Commands
+These go inside the answer box
+They do not give correct answers — navigation only
+
+- BRDPrev
+  - Move back one level
+
+- BRDNext
+  - Move forward one level
+
+- BRDSkip##
+  - Jump directly to a level number
+  - Examples:
+    - BRDSkip5 → Level 5
+    - BRDSkip20 → Level 20
+
+Notes
+- Intended for testing, navigation, and development
+- Does not bypass question logic unless used intentionally
+- Also you can pick any level you want at all times anyways

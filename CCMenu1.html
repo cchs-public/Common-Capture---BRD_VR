@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --accent-red: #ff1f1f;
+            --accent-blue: #0077ff;
+            --glow-red: rgba(255, 31, 31, 0.4);
+            --glow-blue: rgba(0, 119, 255, 0.4);
+            --text-gray: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 0% 0%, var(--glow-red) 0%, transparent 40%),
+                radial-gradient(circle at 100% 100%, var(--glow-blue) 0%, transparent 40%);
+            color: var(--text-gray);
+            font-family: 'Segoe UI', Impact, sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            width: 450px;
+            max-width: 95%;
+            margin: 0 auto;
+            height: 100%;
+            padding: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        #main-menu {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 5.2rem;
+            margin: 0 0 15px;
+
+            /* anti-clip fixes */
+            display: inline-block;
+            padding-right: 0.15em;
+            padding-left: 0.05em;
+            overflow: visible;
+
+            text-transform: uppercase;
+            font-style: italic;
+
+            background: linear-gradient(to right,
+                    var(--accent-red),
+                    #fff,
+                    var(--accent-blue));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+        }
+
+        .btn-main {
+            font-size: 2.5rem;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #444;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            margin-top: 40px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-main:hover {
+            transform: scale(1.08);
+            border-color: var(--accent-red);
+            box-shadow: 0 0 40px var(--glow-red);
+        }
+
+        #level-select {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .level-header {
+            position: sticky;
+            top: 0;
+            background: var(--bg-dark);
+            z-index: 10;
+            padding: 0 0 15px;
+            text-align: center;
+        }
+
+        .level-header h2 {
+            color: var(--accent-blue);
+            letter-spacing: 5px;
+            font-size: 2.4rem;
+            margin: 0;
+        }
+
+        .scrollable-levels {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .level-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 0 8px;
+        }
+
+        .level-item {
+            background: linear-gradient(90deg, rgba(255, 31, 31, 0.08), rgba(0, 119, 255, 0.08));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 18px 24px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .level-item:hover {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            transform: translateX(8px);
+            border-left: 8px solid var(--accent-blue);
+        }
+
+        .btn-back {
+            margin: 25px auto 15px;
+            padding: 12px 50px;
+            background: transparent;
+            border: 2px solid var(--accent-red);
+            color: var(--accent-red);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-red);
+            color: white;
+            box-shadow: 0 0 20px var(--glow-red);
+        }
+
+        .screen {
+            position: absolute;
+            inset: 0;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+
+        .screen.active {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.94);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .active.zoom {
+            animation: zoomIn 0.4s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div id="main-menu" class="screen active zoom">
+            <!-- Game Name Common Capture -->
+            <Title>Common Capture</Title>
+            <h1>Common Capture</h1>
+            <h2 style="opacity:0.9; margin:10px 0;">Capturing America Through 25 Short Quetions</h2>
+            <h3 style="opacity:0.7;">By BRD_VR</h3>
+            <button class="btn-main" onclick="showScreen('level-select')">Begin</button>
+        </div>
+
+        <div id="level-select" class="screen">
+            <div class="level-header">
+                <h2>Level Options</h2>
+            </div>
+
+            <div class="scrollable-levels">
+                <div class="level-list" id="levelContainer"></div>
+            </div>
+
+            <button class="btn-back" onclick="showScreen('main-menu')">↩ Return</button>
+        </div>
+
+    </div>
+
+    <script>
+        const TOTAL_LEVELS = 25; // easy to change later
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(el => {
+                el.classList.remove('active', 'zoom');
+            });
+
+            const target = document.getElementById(id);
+            target.classList.add('active');
+
+            if (id === 'level-select') {
+                target.classList.add('zoom');
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const container = document.getElementById('levelContainer');
+
+            for (let i = 1; i <= TOTAL_LEVELS; i++) {
+                const item = document.createElement('div');
+                item.className = 'level-item';
+                item.innerHTML = `<span>LEVEL ${i}</span><span>></span>`;
+
+                item.onclick = () => {
+                    window.location.href = `BRDLoader.html?l=${i}`;
+                };
+
+                container.appendChild(item);
+            }
+
+            // Auto-open level select if returning from a level
+            if (window.location.hash === '#level-select') {
+                showScreen('level-select');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
