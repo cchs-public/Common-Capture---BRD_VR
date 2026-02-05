@@ -188,8 +188,8 @@
 
 <body>
 
-    <div class="-panel">
-        <h1 id="Heading"></h1>
+    <div class="level-panel">
+        <h1 id="levelHeading">LEVEL</h1>
         <div class="subtitle">Complete the task</div>
 
         <div class="question-tile">
@@ -201,7 +201,7 @@
         <div class="buttons">
             <button class="btn-action" id="retryBtn">Retry</button>
             <button class="btn-action" id="submitBtn">Submit</button>
-            <button class="btn-menu" onclick="goToSelect()"> Select</button>
+            <button class="btn-menu" onclick="goToLevelSelect()">Level Select</button>
             <button class="btn-menu" onclick="goToMenu()">Main Menu</button>
         </div>
     </div>
@@ -212,121 +212,117 @@
             <button class="btn-next" id="nextBtn">Next</button>
         </div>
     </div>
-   <script>
-    const params = new URLSearchParams(location.search);
-    let current = parseInt(params.get("l")) || 1;
 
-    const questions = {
-        1: { q: "Christopher Columbus arrived in the Americas in what year?", a: "1492" },
-        2: { q: "Jamestown was founded in what year?", a: "1607" },
-        3: { q: "The Pilgrims arrived on the Mayflower in what year?", a: "1620" },
-        4: { q: "The American Revolutionary War began in what year?", a: "1775" },
-        5: { q: "The Declaration of Independence was adopted in what year?", a: "1776" },
-        6: { q: "The Revolutionary War ended in what year?", a: "1783" },
-        7: { q: "The U.S. Constitution was signed in what year?", a: "1787" },
-        8: { q: "George Washington became president in what year?", a: "1789" },
-        9: { q: "The Louisiana Purchase was completed in what year?", a: "1803" },
-        10: { q: "The War of 1812 began in what year?", a: "1812" },
-        11: { q: "The Mexican-American War began in what year?", a: "1846" },
-        12: { q: "Gold was discovered in California in what year?", a: "1848" },
-        13: { q: "The Civil War began in what year?", a: "1861" },
-        14: { q: "The Civil War ended in what year?", a: "1865" },
-        15: { q: "Abraham Lincoln was assassinated in what year?", a: "1865" },
-        16: { q: "The U.S. purchased Alaska in what year?", a: "1867" },
-        17: { q: "The Spanish-American War took place in what year?", a: "1898" },
-        18: { q: "The U.S. entered World War I in what year?", a: "1917" },
-        19: { q: "The Great Depression began in what year?", a: "1929" },
-        20: { q: "The U.S. entered World War II in what year?", a: "1941" },
-        21: { q: "Atomic bombs ended World War II in what year?", a: "1945" },
-        22: { q: "The Korean War began in what year?", a: "1950" },
-        23: { q: "The Civil Rights Act became law in what year?", a: "1964" },
-        24: { q: "Apollo 11 landed on the Moon in what year?", a: "1969" },
-        25: { q: "The first iPhone launched in what year?", a: "2007" }
-    };
+    <script>
+        const params = new URLSearchParams(location.search);
+        let currentLevel = parseInt(params.get("l")) || 1;
 
-    const TOTAL_S = Object.keys(questions).length;
+        const questions = {
+            1: { q: "Christopher Columbus arrived in the Americas in what year?", a: "1492" },
+            2: { q: "Jamestown was founded in what year?", a: "1607" },
+            3: { q: "The Pilgrims arrived on the Mayflower in what year?", a: "1620" },
+            4: { q: "The American Revolutionary War began in what year?", a: "1775" },
+            5: { q: "The Declaration of Independence was adopted in what year?", a: "1776" },
+            6: { q: "The Revolutionary War ended in what year?", a: "1783" },
+            7: { q: "The U.S. Constitution was signed in what year?", a: "1787" },
+            8: { q: "George Washington became president in what year?", a: "1789" },
+            9: { q: "The Louisiana Purchase was completed in what year?", a: "1803" },
+            10: { q: "The War of 1812 began in what year?", a: "1812" },
+            11: { q: "The Mexican-American War began in what year?", a: "1846" },
+            12: { q: "Gold was discovered in California in what year?", a: "1848" },
+            13: { q: "The Civil War began in what year?", a: "1861" },
+            14: { q: "The Civil War ended in what year?", a: "1865" },
+            15: { q: "Abraham Lincoln was assassinated in what year?", a: "1865" },
+            16: { q: "The U.S. purchased Alaska in what year?", a: "1867" },
+            17: { q: "The Spanish-American War took place in what year?", a: "1898" },
+            18: { q: "The U.S. entered World War I in what year?", a: "1917" },
+            19: { q: "The Great Depression began in what year?", a: "1929" },
+            20: { q: "The U.S. entered World War II in what year?", a: "1941" },
+            21: { q: "Atomic bombs ended World War II in what year?", a: "1945" },
+            22: { q: "The Korean War began in what year?", a: "1950" },
+            23: { q: "The Civil Rights Act became law in what year?", a: "1964" },
+            24: { q: "Apollo 11 landed on the Moon in what year?", a: "1969" },
+            25: { q: "The first iPhone launched in what year?", a: "2007" }
+        };
 
-    setup();
+        const TOTAL_LEVELS = Object.keys(questions).length;
 
-    function setup() {
-        if (!questions[current]) {
-            location.href = "CCMenu1.html";
-            return;
+        setup();
+
+        function setup() {
+            if (!questions[currentLevel]) {
+                location.href = "CCMenu1.html";
+                return;
+            }
+
+            document.title = `Level ${currentLevel}`;
+            levelHeading.textContent = `LEVEL ${currentLevel}`;
+            completeHeading.textContent = `LEVEL ${currentLevel} COMPLETE`;
+            questionText.textContent = questions[currentLevel].q;
         }
 
-        document.title = `Level ${current}`;
-        levelHeading.textContent = `LEVEL ${current}`;
-        completeHeading.textContent = `LEVEL ${current} COMPLETE`;
-        questionText.textContent = questions[current].q;
-    }
-
-    function jumpTo(level) {
-        if (level < 1 || level > TOTAL_S) return;
-        location.href = `BRDLoader.html?l=${level}`;
-    }
-
-    function handleDevCommands(input) {
-        const v = input.trim().toUpperCase();
-
-        if (v === "BRDNEXT") {
-            completeOverlay.classList.add("active");
-            return true;
+        function jumpTo(level) {
+            if (level < 1 || level > TOTAL_LEVELS) return;
+             location.href = `BRDLoader.html?l=${level}`;
         }
 
-        if (v === "BRDPREV") {
-            jumpTo(current - 1);
-            return true;
+        function handleDevCommands(input) {
+            const v = input.trim().toUpperCase();
+
+            if (v === "BRDNEXT") {
+                completeOverlay.classList.add("active");
+                return true;
+            }
+
+            if (v === "BRDPREV") {
+                jumpTo(currentLevel - 1);
+                return true;
+            }
+
+            if (v.startsWith("BRDSKIP")) {
+                const t = parseInt(v.replace("BRDSKIP", ""));
+                if (!isNaN(t)) jumpTo(t);
+                return true;
+            }
+
+            if (v === "BRDBUILD") {
+                location.href = "Customs.html";
+                return true;
+            }
+
+            return false;
         }
 
-        if (v.startsWith("BRDSKIP")) {
-            const t = parseInt(v.replace("BRDSKIP", ""));
-            if (!isNaN(t)) jumpTo(t);
-            return true;
-        }
+        submitBtn.onclick = () => {
+            const v = answerInput.value;
 
-        if (v === "BRDBUILD") {
-            location.href = "Customs.html";
-            return true;
-        }
+            if (handleDevCommands(v)) return;
 
-        return false;
-    }
+            if (v.trim() === questions[currentLevel].a) {
+                completeOverlay.classList.add("active");
+            } else {
+                feedback.textContent = "Wrong answer. Hit Retry.";
+                submitBtn.disabled = true;
+            }
+        };
 
-    submitBtn.onclick = () => {
-        const v = answerInput.value;
+        retryBtn.onclick = () => {
+            answerInput.value = "";
+            feedback.textContent = "";
+            submitBtn.disabled = false;
+        };
 
-        if (handleDevCommands(v)) return;
+        nextBtn.onclick = () => {
+            if (currentLevel < TOTAL_LEVELS) {
+                jumpTo(currentLevel + 1);
+            } else {
+                location.href = "BRDCred+Specials.html";
+            }
+        };
 
-        if (v.trim() === questions[current].a) {
-            completeOverlay.classList.add("active");
-        } else {
-            feedback.textContent = "Wrong answer. Hit Retry.";
-            submitBtn.disabled = true;
-        }
-    };
-
-    retryBtn.onclick = () => {
-        answerInput.value = "";
-        feedback.textContent = "";
-        submitBtn.disabled = false;
-    };
-
-    nextBtn.onclick = () => {
-        if (current < TOTAL_S) {
-            jumpTo(current + 1);
-        } else {
-            location.href = "BRDCred+Specials.html";
-        }
-    };
-
-    function goToMenu() { 
-        location.href = "CCMenu1.html"; 
-    }
-
-    function goToLevelSelect() { 
-        location.href = "CCMenu1.html#level-select"; 
-    }
-</script>
+        function goToMenu() { location.href = "CCMenu1.html"; }
+        function goToLevelSelect() { location.href = "CCMenu1.html#level-select"; }
+    </script>
 
 </body>
 
