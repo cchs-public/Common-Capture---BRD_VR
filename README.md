@@ -1,7 +1,7 @@
 # Common Capture — BRD_VR
 
-**Current Version:** 3.4.3
-**Last Update:** 2/4/2026
+**Current Version:** 3.5.1
+**Last Update:** 2/5/2026
 
 ---
 
@@ -67,6 +67,9 @@
     * `BRDSkip5` → Level 5
     * `BRDSkip20` → Level 20
 
+* **BRDBuild**
+
+  * Custom Question Model Option
 ---
 
 ## Developer Notes
