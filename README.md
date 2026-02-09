@@ -1,7 +1,7 @@
 # Common Capture — BRD_VR
 
-**Current Version:** 3.5.1
-**Last Update:** 2/5/2026
+**Current Version:** 3.5.2
+**Last Update:** 2/9/2026
 
 ---
 
@@ -110,3 +110,4 @@
 **Project Name:** Common Capture
 **Creator:** BRD_VR
 **Focus:** Clean structure, scalable design, system-first architecture
+**Rights:** I would ask you people not to copy the project or claim it as yours
