@@ -1,0 +1,32 @@
+{
+  "title": "Classic",
+  "color1": "#ff1f1f",
+  "color2": "#0077ff",
+  "levels": [
+    {"q": "Christopher Columbus arrived in the Americas in what year?", "a": "1492"},
+    {"q": "Jamestown was founded in what year?", "a": "1607"},
+    {"q": "The Pilgrims arrived on the Mayflower in what year?", "a": "1620"},
+    {"q": "The American Revolutionary War began in what year?", "a": "1775"},
+    {"q": "The Declaration of Independence was adopted in what year?", "a": "1776"},
+    {"q": "The Revolutionary War ended in what year?", "a": "1783"},
+    {"q": "The U.S. Constitution was signed in what year?", "a": "1787"},
+    {"q": "George Washington became president in what year?", "a": "1789"},
+    {"q": "The Louisiana Purchase was completed in what year?", "a": "1803"},
+    {"q": "The War of 1812 began in what year?", "a": "1812"},
+    {"q": "The Mexican-American War began in what year?", "a": "1846"},
+    {"q": "Gold was discovered in California in what year?", "a": "1848"},
+    {"q": "The Civil War began in what year?", "a": "1861"},
+    {"q": "The Civil War ended in what year?", "a": "1865"},
+    {"q": "Abraham Lincoln was assassinated in what year?", "a": "1865"},
+    {"q": "The U.S. purchased Alaska in what year?", "a": "1867"},
+    {"q": "The Spanish-American War took place in what year?", "a": "1898"},
+    {"q": "The U.S. entered World War I in what year?", "a": "1917"},
+    {"q": "The Great Depression began in what year?", "a": "1929"},
+    {"q": "The U.S. entered World War II in what year?", "a": "1941"},
+    {"q": "Atomic bombs ended World War II in what year?", "a": "1945"},
+    {"q": "The Korean War began in what year?", "a": "1950"},
+    {"q": "The Civil Rights Act became law in what year?", "a": "1964"},
+    {"q": "Apollo 11 landed on the Moon in what year?", "a": "1969"},
+    {"q": "The first iPhone launched in what year?", "a": "2007"}
+  ]
+}
