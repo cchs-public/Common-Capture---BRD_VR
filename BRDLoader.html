@@ -64,57 +64,134 @@ button:active{transform:scale(0.94);}
 </div>
 
 <script>
-const params=new URLSearchParams(location.search);
-let currentLevel=parseInt(params.get("l"))||1;
-let presetFile=params.get("p")||"Classic.json";
-let presetData=null;
+const params = new URLSearchParams(location.search);
+let presetFile = params.get("preset") || "Classic.json"; // default
+let currentLevel = parseInt(params.get("l")) || 1;
 
-async function setup(){
-    const res=await fetch(`presets/${presetFile}`);
-    presetData=await res.json();
+let preset = null;
+let TOTAL_LEVELS = 0;
 
-    // Apply preset colors
-    document.documentElement.style.setProperty('--accent-red',presetData.color1);
-    document.documentElement.style.setProperty('--accent-blue',presetData.color2);
-    document.documentElement.style.setProperty('--glow-red',presetData.color1+'66');
-    document.documentElement.style.setProperty('--glow-blue',presetData.color2+'66');
+// DOM references
+const levelHeading = document.getElementById("levelHeading");
+const questionText = document.getElementById("questionText");
+const answerInput = document.getElementById("answerInput");
+const feedback = document.getElementById("feedback");
+const submitBtn = document.getElementById("submitBtn");
+const retryBtn = document.getElementById("retryBtn");
+const nextBtn = document.getElementById("nextBtn");
+const completeOverlay = document.getElementById("completeOverlay");
 
-    document.title=`${presetData.title} - Level ${currentLevel}`;
-    levelHeading.textContent=`LEVEL ${currentLevel} - ${presetData.title}`;
-    completeHeading.textContent=`LEVEL ${currentLevel} COMPLETE`;
+// Load preset JSON
+fetch(`presets/${presetFile}`)
+  .then(res => res.json())
+  .then(data => {
+      preset = data;
+      TOTAL_LEVELS = preset.levels.length;
 
-    const question=presetData.levels[currentLevel-1];
-    if(!question){ location.href="CCMenu1.html"; return; }
-    questionText.textContent=question.q;
+      // Apply corner colors
+      document.body.style.backgroundImage = `
+          radial-gradient(circle at 0% 0%, ${preset.color1} 0%, transparent 40%),
+          radial-gradient(circle at 100% 100%, ${preset.color2} 0%, transparent 40%)
+      `;
 
-    nextBtn.onclick=()=> {
-        if(currentLevel<presetData.levels.length){
-            location.href=`BRDLoader.html?p=${presetFile}&l=${currentLevel+1}`;
-        } else location.href="CCMenu1.html";
-    };
+      setupLevel(currentLevel);
+  })
+  .catch(err => {
+      console.error("Failed to load preset:", err);
+      levelHeading.textContent = "Error loading preset";
+  });
+
+// Setup a level
+function setupLevel(level) {
+    if (!preset || !preset.levels[level - 1]) {
+        // Level does not exist → send back to menu
+        location.href = "CCMenu1.html";
+        return;
+    }
+
+    const q = preset.levels[level - 1];
+    levelHeading.textContent = `LEVEL ${level}`;
+    document.title = `Level ${level} - ${preset.title}`;
+    questionText.textContent = q.q;
+    answerInput.value = "";
+    feedback.textContent = "";
+    submitBtn.disabled = false;
+    completeOverlay.classList.remove("active");
 }
 
-function handleDevCommands(input){
-    const v=input.trim().toUpperCase();
-    if(v==="BRDNEXT"){completeOverlay.classList.add("active");return true;}
-    if(v==="BRDPREV"){jumpTo(currentLevel-1);return true;}
-    if(v.startsWith("BRDSKIP")){const t=parseInt(v.replace("BRDSKIP",""));if(!isNaN(t))jumpTo(t);return true;}
-    if(v==="BRDBUILD"){location.href="BRDBuilder.html";return true;}
+// Jump to another level
+function jumpTo(level) {
+    if (level < 1) return;
+    if (level > TOTAL_LEVELS) {
+        // Last level → go to credits
+        location.href = "BRDCred+Specials.html";
+        return;
+    }
+    // Reload loader with new level and same preset
+    location.href = `BRDLoader.html?preset=${presetFile}&l=${level}`;
+}
+
+// Button events
+submitBtn.onclick = () => {
+    const userAnswer = answerInput.value.trim();
+    const correctAnswer = preset.levels[currentLevel - 1].a;
+
+    if (handleDevCommands(userAnswer)) return;
+
+    if (userAnswer === correctAnswer) {
+        completeOverlay.classList.add("active");
+    } else {
+        feedback.textContent = "Wrong answer. Hit Retry.";
+        submitBtn.disabled = true;
+    }
+};
+
+retryBtn.onclick = () => {
+    answerInput.value = "";
+    feedback.textContent = "";
+    submitBtn.disabled = false;
+};
+
+nextBtn.onclick = () => {
+    jumpTo(currentLevel + 1);
+};
+
+function goToMenu() {
+    location.href = "CCMenu1.html";
+}
+
+function goToLevelSelect() {
+    location.href = `CCMenu1.html#level-select`;
+}
+
+// Optional: Dev commands
+function handleDevCommands(input) {
+    const v = input.trim().toUpperCase();
+
+    if (v === "BRDNEXT") {
+        completeOverlay.classList.add("active");
+        return true;
+    }
+
+    if (v === "BRDPREV") {
+        jumpTo(currentLevel - 1);
+        return true;
+    }
+
+    if (v.startsWith("BRDSKIP")) {
+        const t = parseInt(v.replace("BRDSKIP", ""));
+        if (!isNaN(t)) jumpTo(t);
+        return true;
+    }
+
+    if (v === "BRDBUILD") {
+        location.href = "BRDBuilder.html";
+        return true;
+    }
+
     return false;
 }
-
-submitBtn.onclick=()=>{
-    const v=answerInput.value;
-    if(handleDevCommands(v))return;
-    if(v.trim()===presetData.levels[currentLevel-1].a){completeOverlay.classList.add("active");}
-    else{feedback.textContent="Wrong answer. Hit Retry.";submitBtn.disabled=true;}
-};
-retryBtn.onclick=()=>{answerInput.value="";feedback.textContent="";submitBtn.disabled=false;};
-function jumpTo(level){if(level<1||level>presetData.levels.length)return;location.href=`BRDLoader.html?p=${presetFile}&l=${level}`;}
-function goToMenu(){location.href="CCMenu1.html";}
-function goToLevelSelect(){location.href=`CCMenu1.html#level-select`;}
-
-setup();
 </script>
+
 </body>
 </html>
