@@ -1,7 +1,7 @@
 {
-  "title": "Classic",
-  "color1": "#ff1f1f",
-  "color2": "#0077ff",
+  "title": "Test",
+"color1": "#FFD700",
+"color2": "#800080",
   "levels": [
       {"q": "Type 1", "a": "1"},
       {"q": "Type 2", "a": "2"},
