@@ -1,7 +1,7 @@
 {
   "title": "Classic",
   "color1": "#8a2be2",
-  "color2": "#ffd700"
+  "color2": "#ffd700",
   "levels": [
     {"q": "Christopher Columbus arrived in the Americas in what year?", "a": "1492"},
     {"q": "Jamestown was founded in what year?", "a": "1607"},
