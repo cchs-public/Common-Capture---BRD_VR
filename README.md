@@ -1,7 +1,7 @@
 # Common Capture — BRD_VR
 
-**Current Version:** 4.0.0
-**Last Update:** 2/9/2026
+**Current Version:** 4.0.3
+**Last Update:** 02/10/2026
 
 ---
 
