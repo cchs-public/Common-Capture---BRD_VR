@@ -65,7 +65,9 @@ button:active{transform:scale(0.94);}
 
 <script>
 const params = new URLSearchParams(location.search);
-let presetFile = params.get("preset") || "Classic.json"; // default
+
+// Accept both ?p= and ?preset=
+let requestedPreset = params.get("preset") || params.get("p");
 let currentLevel = parseInt(params.get("l")) || 1;
 
 let preset = null;
@@ -81,30 +83,56 @@ const retryBtn = document.getElementById("retryBtn");
 const nextBtn = document.getElementById("nextBtn");
 const completeOverlay = document.getElementById("completeOverlay");
 
-// Load preset JSON
-fetch(`presets/${presetFile}`)
-  .then(res => res.json())
+// ================================
+// STRICT PRESET SYSTEM
+// ================================
+
+fetch("presets/index.json")
+  .then(res => {
+    if (!res.ok) throw new Error("index.json missing");
+    return res.json();
+  })
+  .then(presetList => {
+
+    if (!requestedPreset) {
+      throw new Error("No preset specified in URL");
+    }
+
+    if (!presetList.includes(requestedPreset)) {
+      throw new Error("Preset not listed in index.json");
+    }
+
+    return fetch(`presets/${requestedPreset}`);
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Preset file not found");
+    return res.json();
+  })
   .then(data => {
-      preset = data;
-      TOTAL_LEVELS = preset.levels.length;
+    preset = data;
+    TOTAL_LEVELS = preset.levels.length;
 
-      // Apply corner colors
-      document.body.style.backgroundImage = `
-          radial-gradient(circle at 0% 0%, ${preset.color1} 0%, transparent 40%),
-          radial-gradient(circle at 100% 100%, ${preset.color2} 0%, transparent 40%)
-      `;
+    // Apply colors
+    document.body.style.backgroundImage = `
+      radial-gradient(circle at 0% 0%, ${preset.color1} 0%, transparent 40%),
+      radial-gradient(circle at 100% 100%, ${preset.color2} 0%, transparent 40%)
+    `;
 
-      setupLevel(currentLevel);
+    setupLevel(currentLevel);
   })
   .catch(err => {
-      console.error("Failed to load preset:", err);
-      levelHeading.textContent = "Error loading preset";
+    console.error("PRESET LOAD ERROR:", err);
+    levelHeading.textContent = "PRESET LOAD FAILED";
+    questionText.textContent = err.message;
+    feedback.textContent = "Invalid or missing preset.";
   });
 
-// Setup a level
+// ================================
+// LEVEL SETUP
+// ================================
+
 function setupLevel(level) {
     if (!preset || !preset.levels[level - 1]) {
-        // Level does not exist → send back to menu
         location.href = "CCMenu1.html";
         return;
     }
@@ -119,19 +147,33 @@ function setupLevel(level) {
     completeOverlay.classList.remove("active");
 }
 
-// Jump to another level
+// ================================
+// NAVIGATION
+// ================================
+
 function jumpTo(level) {
     if (level < 1) return;
+
     if (level > TOTAL_LEVELS) {
-        // Last level → go to credits
         location.href = "BRDCred+Specials.html";
         return;
     }
-    // Reload loader with new level and same preset
-    location.href = `BRDLoader.html?preset=${presetFile}&l=${level}`;
+
+    location.href = `BRDLoader.html?p=${requestedPreset}&l=${level}`;
 }
 
-// Button events
+function goToMenu() {
+    location.href = "CCMenu1.html";
+}
+
+function goToLevelSelect() {
+    location.href = `CCMenu1.html#level-select`;
+}
+
+// ================================
+// BUTTON EVENTS
+// ================================
+
 submitBtn.onclick = () => {
     const userAnswer = answerInput.value.trim();
     const correctAnswer = preset.levels[currentLevel - 1].a;
@@ -156,15 +198,10 @@ nextBtn.onclick = () => {
     jumpTo(currentLevel + 1);
 };
 
-function goToMenu() {
-    location.href = "CCMenu1.html";
-}
+// ================================
+// DEV COMMANDS
+// ================================
 
-function goToLevelSelect() {
-    location.href = `CCMenu1.html#level-select`;
-}
-
-// Optional: Dev commands
 function handleDevCommands(input) {
     const v = input.trim().toUpperCase();
 
