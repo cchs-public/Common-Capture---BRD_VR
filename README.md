@@ -9,9 +9,6 @@
 
 * Question-based progression game
 * Focused on **American history & milestones**
-* Linear progression system
-* Starts at **Christopher Columbus (1492)**
-* Ends at **first iPhone release (2007)**
 * One-level-at-a-time design
 * Built as a **data-driven system** (scalable structure)
 * Designed for expansion (levels, modes, categories, difficulty)
@@ -39,7 +36,9 @@
 * No forced progression lock
 * Free level access at all times
 * Menu-based navigation
-* URL parameter loading (`?l=` system)
+* URL parameter loading
+* main presets by BRD_VR explicitly
+* Builder is custom questions
 
 ---
 
@@ -69,20 +68,16 @@
 
 * **BRDBuild**
 
-  * Custom Question Model Option
+* Custom Question Model Mode
 ---
 
 ## Developer Notes
 
-* Commands are intended for:
+* Commands are intended if you want to skip questions.
 
-  * Testing
-  * Navigation
-  * Debugging
-  * Development flow
 * Does not bypass question logic unless intentionally used
 * Game already allows manual level selection at all times
-* Dev commands exist for speed + testing efficiency
+* Dev commands exist for speed + testing efficiency + fun
 
 ---
 
