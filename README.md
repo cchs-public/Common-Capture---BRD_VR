@@ -1,7 +1,5 @@
 # Common Capture — BRD_VR
 
----
-
 ## About the Game
 
 * Question-based progression game
