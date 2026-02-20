@@ -225,6 +225,34 @@ function handleDevCommands(input) {
         location.href = "BRDBuilder.html";
         return true;
     }
+    
+if (v.startsWith("BRDMOVE")) {
+    const raw = input.trim().replace(/^BRDMOVE/i, "");
+
+    const presetMatch = raw.match(/[A-Za-z]+/);
+    const levelMatch = raw.match(/\d+/);
+
+    if (presetMatch && levelMatch) {
+        const targetPresetName = presetMatch[0].toLowerCase();
+        const targetLevel = parseInt(levelMatch[0]);
+
+        fetch("presets/index.json")
+            .then(res => res.json())
+            .then(presetList => {
+                const foundPreset = presetList.find(p =>
+                    p.toLowerCase() === targetPresetName + ".json"
+                );
+
+                if (foundPreset) {
+                    location.href = `BRDLoader.html?p=${foundPreset}&l=${targetLevel}`;
+                } else {
+                    console.warn("Preset not found in index.");
+                }
+            });
+    }
+
+    return true;
+}
 
     return false;
 }
