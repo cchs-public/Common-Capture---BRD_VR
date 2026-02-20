@@ -37,12 +37,11 @@ h1{font-size:5.2rem;margin:0 0 15px;display:inline-block;padding-right:0.15em;pa
 @keyframes zoomIn{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
 .active.zoom{animation:zoomIn 0.4s ease-out;}
 
-#main-menu footer {
-    margin-top: 20px;
+#main-menu footer div {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    margin-top: 4px; /* space between lines */
 }
 	
 </style>
@@ -61,7 +60,10 @@ h1{font-size:5.2rem;margin:0 0 15px;display:inline-block;padding-right:0.15em;pa
     <h4 style="opacity:0.9; margin:10px 0;">It contains dev style commands.</h4>
 
     <!-- Footer inside main-menu -->
-    <footer id="pageFooter"></footer>
+	<footer id="pageFooter">
+  	<div id="versionLine"></div>
+   	<div id="devnoteLine"></div>
+	</footer>
 </div>
 
     <div id="level-select" class="screen">
@@ -122,15 +124,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(window.location.hash === '#level-select') showScreen('level-select');
 
     // ======== Footer Setup (only main menu) ========
-    try {
-        const res = await fetch("version.json");
-        const data = await res.json();
-        const footer = document.getElementById("pageFooter");
-        footer.textContent = `Common Capture Version ${data.version} (Updated ${data.updated}) © BRD_VR`;
-    } catch (err) {
-        console.warn("Version fetch failed:", err);
-    }
+try {
+    const res = await fetch("version.json");
+    const data = await res.json();
 
+    document.getElementById("versionLine").textContent = 
+        `Common Capture Version ${data.version} (Updated ${data.updated}) © BRD_VR`;
+
+    if (data.devnote) {
+        document.getElementById("devnoteLine").textContent = data.devnote;
+    }
+} catch (err) {
+    console.warn("Version fetch failed:", err);
+}
+	
     // ======== Buttons for Screen Switching ========
     window.showScreen = showScreen; // keep your existing onclick handlers working
 });
