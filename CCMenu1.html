@@ -36,6 +36,15 @@ h1{font-size:5.2rem;margin:0 0 15px;display:inline-block;padding-right:0.15em;pa
 .screen.active{visibility:visible;opacity:1;pointer-events:all;}
 @keyframes zoomIn{from{opacity:0;transform:scale(0.94);}to{opacity:1;transform:scale(1);}}
 .active.zoom{animation:zoomIn 0.4s ease-out;}
+
+#main-menu footer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+	
 </style>
 </head>
 
@@ -65,47 +74,65 @@ h1{font-size:5.2rem;margin:0 0 15px;display:inline-block;padding-right:0.15em;pa
 </div>
 
 <script>
-function showScreen(id){
-    document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active','zoom'));
-    const target=document.getElementById(id);
-    target.classList.add('active','zoom');
-}
-
-async function loadPresets(){
-    const indexRes=await fetch('presets/index.json');
-    const presetFiles=await indexRes.json();
-    const container=document.getElementById('levelContainer');
-    container.innerHTML='';
-
-    for(const file of presetFiles){
-        const res=await fetch(`presets/${file}`);
-        const preset=await res.json();
-
-        const presetBtn=document.createElement('div');
-        presetBtn.className='level-item';
-        presetBtn.textContent=preset.title;
-        presetBtn.onclick=()=>showPresetLevels(preset,file);
-        container.appendChild(presetBtn);
+document.addEventListener("DOMContentLoaded", async () => {
+    // ======== Screen Management ========
+    function showScreen(id){
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active','zoom'));
+        const target = document.getElementById(id);
+        target.classList.add('active','zoom');
     }
-}
 
-function showPresetLevels(preset,fileName){
-    const container=document.getElementById('levelContainer');
-    container.innerHTML='';
-    preset.levels.forEach((lvl,i)=>{
-        const lvlBtn=document.createElement('div');
-        lvlBtn.className='level-item';
-        lvlBtn.innerHTML=`<span>LEVEL ${i+1}</span><span>></span>`;
-        lvlBtn.onclick=()=>window.location.href=`BRDLoader.html?p=${fileName}&l=${i+1}`;
-        container.appendChild(lvlBtn);
-    });
-}
+    // ======== Preset Loading ========
+    async function loadPresets(){
+        const indexRes = await fetch('presets/index.json');
+        const presetFiles = await indexRes.json();
+        const container = document.getElementById('levelContainer');
+        container.innerHTML = '';
 
-document.addEventListener("DOMContentLoaded",()=>{
+        for(const file of presetFiles){
+            const res = await fetch(`presets/${file}`);
+            const preset = await res.json();
+
+            const presetBtn = document.createElement('div');
+            presetBtn.className = 'level-item';
+            presetBtn.textContent = preset.title;
+            presetBtn.onclick = () => showPresetLevels(preset, file);
+            container.appendChild(presetBtn);
+        }
+    }
+
+    function showPresetLevels(preset, fileName){
+        const container = document.getElementById('levelContainer');
+        container.innerHTML = '';
+        preset.levels.forEach((lvl,i)=>{
+            const lvlBtn = document.createElement('div');
+            lvlBtn.className = 'level-item';
+            lvlBtn.innerHTML = `<span>LEVEL ${i+1}</span><span>></span>`;
+            lvlBtn.onclick = () => window.location.href=`BRDLoader.html?p=${fileName}&l=${i+1}`;
+            container.appendChild(lvlBtn);
+        });
+    }
+
+    // ======== Initialize Main Menu ========
     showScreen('main-menu');
     loadPresets();
-    if(window.location.hash==='#level-select') showScreen('level-select');
+    if(window.location.hash === '#level-select') showScreen('level-select');
+
+    // ======== Footer Setup (only main menu) ========
+    try {
+        const res = await fetch("version.json");
+        const data = await res.json();
+        const footer = document.getElementById("pageFooter");
+        footer.textContent = `Common Capture Version ${data.version} (Updated ${data.updated}) © BRD_VR`;
+    } catch (err) {
+        console.warn("Version fetch failed:", err);
+    }
+
+    // ======== Buttons for Screen Switching ========
+    window.showScreen = showScreen; // keep your existing onclick handlers working
 });
 </script>
+<footer id="pageFooter"></footer>
+	
 </body>
 </html>
