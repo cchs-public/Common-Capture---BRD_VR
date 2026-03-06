@@ -2,10 +2,9 @@
 
 ## About the Game
 
-* Question-based progression game
-* Focused on **American history & milestones**
-* One-level-at-a-time design
-* Built as a **data-driven system** (scalable structure)
+* Question and preset-based game
+* Focused on **Presets, and custom presets**
+* Built as a scalable and structured system
 * Designed for expansion (levels, modes, categories, difficulty)
 
 ---
@@ -14,34 +13,29 @@
 
 * Minimal UI
 * Fast interactions
-* Clean progression
+* Clean systems
 * No clutter
-* No filler systems
-* Focused gameplay loop:
-
-  * Load level
-  * Answer question
-  * Progress forward
+* Focused gameplay loop
 
 ---
 
 ## Navigation System
 
-* Level Select always available
+* Any preset or level is always unlocked
 * No forced progression lock
-* Free level access at all times
 * Menu-based navigation
 * URL parameter loading
-* main presets by BRD_VR explicitly
-* Builder is custom questions
+* Main presets by BRD_VR explicitly
+* Builder is custom a questions system
+* Credits page shows the special input commands within it.
 
 ---
 
 ## Special Input Commands
 
-> These are typed into the **answer input box**
-> These are **navigation & development commands only**
-> They do NOT count as correct answers
+> These are typed into the **level answer input box**
+> These are **navigation & development commands**
+> They can **skip levels** and certain things, but use them **whenever**.
 
 ### Commands
 
@@ -60,38 +54,28 @@
 
     * `BRDSkip5` → Level 5
     * `BRDSkip20` → Level 20
+   
+* **BRDMovePreset##**
+
+  * Jump directly to a preset AND level
+  * Examples:
+
+    * `BRDMoveMath5` → Level 5
+    * `BRDMovePreset215` → Level 20
 
 * **BRDBuild**
 
-* Custom Question Model Mode
+* Custom Question Model Mode (with custom downloaded presets)
+* Make any question set, play it, and save it for reupload later
 ---
 
 ## Developer Notes
 
 * Commands are intended if you want to skip questions.
 
-* Does not bypass question logic unless intentionally used
+* Ability to bypass question logic when intentionally used
 * Game already allows manual level selection at all times
-* Dev commands exist for speed + testing efficiency + fun
-
----
-
-## System Direction
-
-* Modular architecture
-* Preset-based level system
-* Scalable content design
-* Engine-style structure
-* Designed for future expansion:
-
-  * Difficulty modes
-  * Categories
-  * Game modes
-  * Time challenges
-  * Scoring systems
-  * Progress tracking
-  * Achievements
-  * Save systems
+* Dev commands exist for speed + travel efficiency + fun
 
 ---
 
