@@ -5,159 +5,184 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="CCLogo.png">
+    <title>Credits | Common Capture</title>
     <style>
         :root {
             --bg-dark: #050505;
-
-            /* 🎨 NEW COLORS */
             --accent-green: #00ff88;
             --accent-orange: #ff9f1c;
-
             --glow-green: rgba(0, 255, 136, .4);
             --glow-orange: rgba(255, 159, 28, .4);
-
             --text-gray: #ffffff;
         }
 
-        * {
-            box-sizing: border-box
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             background: var(--bg-dark);
             background-image:
                 radial-gradient(circle at 0% 0%, var(--glow-green) 0%, transparent 40%),
                 radial-gradient(circle at 100% 100%, var(--glow-orange) 0%, transparent 40%);
             color: var(--text-gray);
-            font-family: 'Segoe UI', Impact, sans-serif;
-            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            overflow-x: hidden;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
-            width: 450px;
+            width: 500px;
             max-width: 95%;
             margin: 0 auto;
-            height: 100%;
-            padding: 20px;
-        }
-
-        button {
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all .3s ease;
-        }
-
-        /* === CREDITS SCREEN === */
-
-        #credits {
-            height: 100%;
+            padding: 40px 10px;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+        }
+
+        /* === SCREEN SYSTEM === */
+        .screen {
+            display: none;
+            flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
+        .screen.active {
+            display: flex;
+        }
+
         h1 {
-            font-size: 5.2rem;
-            margin: 0 0 15px;
-
-            display: inline-block;
-            padding-right: .15em;
-            padding-left: .05em;
-
+            font-size: 3.5rem;
+            margin: 0;
             text-transform: uppercase;
             font-style: italic;
-
-            background: linear-gradient(to right,
-                    var(--accent-green),
-                    #ffffff,
-                    var(--accent-orange));
+            background: linear-gradient(to right, var(--accent-green), #ffffff, var(--accent-orange));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-
             filter: drop-shadow(0 0 15px rgba(255, 255, 255, .2));
         }
 
         .credit-block {
-            margin-top: 25px;
-            line-height: 1.8;
-            font-size: 1.25rem;
+            margin: 15px 0;
+            line-height: 1.4;
+            font-size: 1.1rem;
             opacity: .9;
         }
 
         .credit-block span {
             display: block;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: bold;
-            margin-top: 12px;
+            margin-top: 5px;
             letter-spacing: 2px;
+            color: var(--accent-green);
         }
 
+        /* === COMMAND CARD === */
+        .special-card {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--accent-orange);
+            border-radius: 15px;
+            text-align: left;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px var(--glow-orange);
+        }
+
+        .card-header {
+            color: var(--accent-orange);
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: block;
+            border-bottom: 1px solid rgba(255, 159, 28, 0.3);
+            padding-bottom: 5px;
+        }
+
+        .command-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .cmd-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .cmd-name {
+            color: var(--accent-green);
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .cmd-desc {
+            display: block;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        .dev-notes {
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 15px;
+            line-height: 1.3;
+            font-style: italic;
+        }
+
+        /* === BUTTONS === */
         .btn-main {
-            font-size: 2.2rem;
-            padding: 22px;
-            background: rgba(0, 0, 0, .6);
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            background: rgba(0, 0, 0, 0.5);
             border: 2px solid #444;
             color: white;
             text-transform: uppercase;
-            letter-spacing: 8px;
-            margin-top: 45px;
-            box-shadow: inset 0 0 20px rgba(255, 255, 255, .05);
+            letter-spacing: 5px;
+            margin-top: 30px;
+            border-radius: 10px;
+            transition: all .3s ease;
         }
 
         .btn-main:hover {
-            transform: scale(1.08);
+            transform: scale(1.05);
             border-color: var(--accent-green);
-            box-shadow: 0 0 40px var(--glow-green);
+            box-shadow: 0 0 25px var(--glow-green);
+            background: rgba(0, 255, 136, 0.1);
         }
 
-        .special-card {
-            margin-top: 30px;
-            padding: 18px 25px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 2px solid var(--accent-orange);
-            border-radius: 12px;
-            font-size: 1rem;
-            line-height: 1.5;
-            opacity: 0.85;
-            max-width: 90%;
+        /* === FOOTER === */
+        #pageFooter {
+            margin-top: auto;
+            padding: 25px 0;
+            text-align: center;
+            font-family: monospace;
         }
 
-        /* screen system preserved */
-        .screen {
-            position: absolute;
-            inset: 0;
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .35s ease;
+        #pageFooter div {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
         }
 
-        .screen.active {
-            visibility: visible;
-            opacity: 1;
-            pointer-events: all;
-        }
-
+        /* === ANIMATIONS === */
+        .zoom { animation: zoomIn .4s ease-out; }
         @keyframes zoomIn {
-            from {
-                opacity: 0;
-                transform: scale(.94)
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1)
-            }
-        }
-
-        .active.zoom {
-            animation: zoomIn .4s ease-out;
+            from { opacity: 0; transform: scale(.95); }
+            to { opacity: 1; transform: scale(1); }
         }
     </style>
 </head>
@@ -165,38 +190,94 @@
 <body>
 
     <div class="container">
+        
+        <div id="main-menu" class="screen">
+            <h1>Menu</h1>
+            <div id="levelContainer"></div>
+            <button class="btn-main" onclick="showScreen('credits')">Credits</button>
+        </div>
 
         <div id="credits" class="screen active zoom">
             <h1>Credits</h1>
 
             <div class="credit-block">
-                Thanks for playing<br>
-                You completed all 25 levels
-
+                Thanks for playing!<br>
+                You completed all levels.
                 <span>BRD_VR</span>
                 Game Design • Logic • UI
             </div>
 
             <div class="special-card">
-                <strong>Special Input Commands:</strong><br>
-                <ul>
-                    <li><strong>BRDPrev</strong> — Move back one level</li>
-                    <li><strong>BRDNext</strong> — Skip forward one level</li>
-                    <li><strong>BRDSkip##</strong> — Jump to a specific level </li>
-                    <li>Example: <em>BRDSkip5</em> goes to Level 5</li>
-                    <li><strong>BRDBuild</strong> — Custom Questions Model. </li>
-                </ul>
-                <small style="opacity:0.7;">Type these into the answer box and hit submit.</small>
-                <br>
-                <small style="opacity:0.7;">These are  special use tools—use them wisely!</small>
+                <span class="card-header">Special Input Commands</span>
+                <p style="font-size: 0.85rem; margin-top: 5px; opacity: 0.8;">Typed into the level answer input box.</p>
+                
+                <div class="command-list">
+                    <div class="cmd-item">
+                        <span class="cmd-name">BRDPrev / BRDNext</span>
+                        <span class="cmd-desc">Step backward or forward one level.</span>
+                    </div>
+                    <div class="cmd-item">
+                        <span class="cmd-name">BRDSkip##</span>
+                        <span class="cmd-desc">Jump to specific level (e.g., BRDSkip20).</span>
+                    </div>
+                    <div class="cmd-item">
+                        <span class="cmd-name">BRDMovePreset##</span>
+                        <span class="cmd-desc">Jump to Preset & Level (e.g., BRDMoveMath5).</span>
+                    </div>
+                    <div class="cmd-item">
+                        <span class="cmd-name">BRDBuild</span>
+                        <span class="cmd-desc">Custom Model Mode. Create, play, and save sets.</span>
+                    </div>
+                </div>
+
+                <div class="dev-notes">
+                    Notes: Designed for travel efficiency and logic bypassing. Manual level selection remains available in-game.
+                </div>
             </div>
+
             <button class="btn-main" onclick="location.href='CCMenu1.html'">
                 Main Menu
             </button>
         </div>
 
+        <footer id="pageFooter">
+            <div id="versionLine">Loading version...</div>
+            <div id="devnoteLine"></div>
+        </footer>
+
     </div>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            
+            // ======== Screen Management ========
+            function showScreen(id){
+                document.querySelectorAll('.screen').forEach(el => el.classList.remove('active','zoom'));
+                const target = document.getElementById(id);
+                if(target) target.classList.add('active','zoom');
+            }
+
+            // ======== Footer Setup (Dynamic) ========
+            try {
+                const res = await fetch("version.json");
+                const data = await res.json();
+
+                document.getElementById("versionLine").textContent = 
+                    `Common Capture Version ${data.version} (Updated ${data.updated}) © BRD_VR`;
+
+                if (data.devnote) {
+                    document.getElementById("devnoteLine").textContent = data.devnote;
+                }
+            } catch (err) {
+                console.warn("Version fetch failed:", err);
+                document.getElementById("versionLine").textContent = "Common Capture v1.0.0 © BRD_VR";
+            }
+
+            // ======== Initialize ========
+            // showScreen('credits'); // Start on credits for this file
+            window.showScreen = showScreen;
+        });
+    </script>
 </body>
 
 </html>
