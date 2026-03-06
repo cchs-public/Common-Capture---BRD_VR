@@ -60,8 +60,8 @@
   * Jump directly to a preset AND level
   * Examples:
 
-    * `BRDMoveMath5` → Level 5
-    * `BRDMovePreset215` → Level 20
+    * `BRDMoveMath5` → Level 5 of Math
+    * `BRDMovePreset20` → Level 20 of Preset
 
 * **BRDBuild**
 
