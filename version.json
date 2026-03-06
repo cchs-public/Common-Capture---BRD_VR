@@ -1,5 +1,5 @@
 {
-  "version": "4.1.6",
-  "updated": "03-6-2026",
-  "devnote": "(Update Note:Fixed Github readme, and fixed credits page + included the footer.)"
+  "version": "4.3.0",
+  "updated": "03-6-2026 11:10:AM",
+  "devnote": "(Update Note:Fixed Github readme, and fixed credits page + included the footer. Added CommandPrompt.json as a preset. Sycned builder preset style and manu preset style to be consistant. I improved many things throughout today! Added time to footer...)"
 }
