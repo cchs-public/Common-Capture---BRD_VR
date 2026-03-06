@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Custom Levels</title>
+    <title>Custom Levels Builder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="CCLogo.png">
     <style>
@@ -15,9 +15,7 @@
             --glow-yellow: rgba(255, 216, 77, 0.4);
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
@@ -34,31 +32,22 @@
         }
 
         .level-panel {
-            width: 420px;
-            max-width: 90%;
+            width: 450px;
+            max-width: 95%;
             padding: 30px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
             text-align: center;
+            backdrop-filter: blur(10px);
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-            animation: panelIn 0.6s ease-out;
         }
 
-        h1 {
-            margin: 0;
-            font-size: 3rem;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-        }
-
-        .subtitle {
-            opacity: 0.7;
-            margin: 10px 0 25px;
-        }
+        h1 { margin: 0; font-size: 2.5rem; letter-spacing: 4px; text-transform: uppercase; }
+        .subtitle { opacity: 0.7; margin: 10px 0 20px; font-size: 0.9rem; }
 
         .question-tile {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding: 20px;
             border-radius: 12px;
             background: rgba(255, 255, 255, 0.05);
@@ -66,249 +55,213 @@
             text-align: left;
         }
 
-        .question-tile p {
-            margin: 0 0 10px;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .question-tile input {
+        input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 10px;
             font-size: 1rem;
             border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0,0,0,0.3);
             color: white;
-        }
-
-        .feedback {
-            margin-top: 8px;
-            color: var(--accent-yellow);
-            font-weight: bold;
-            min-height: 1.2em;
         }
 
         .list {
             text-align: left;
-            font-size: 0.95rem;
-            max-height: 150px;
+            max-height: 200px;
             overflow-y: auto;
-            opacity: 0.9;
-        }
-
-        .buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 15px 0;
         }
 
         button {
             padding: 12px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             border-radius: 8px;
             border: none;
             cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .btn-action {
+            letter-spacing: 1px;
             background: var(--accent-purple);
             color: white;
+            transition: transform 0.2s;
         }
 
-        .hidden {
-            display: none;
-        }
-
-        /* COMPLETE OVERLAY */
+        button:hover { transform: scale(1.02); background: #af7dff; }
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .hidden { display: none; }
+        
         .complete-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
+            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.8);
+            display: none; align-items: center; justify-content: center;
         }
-
-        .complete-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        @keyframes panelIn {
-            from {
-                opacity: 0;
-                transform: scale(0.94) translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
-        }
+        .complete-overlay.active { display: flex; }
     </style>
 </head>
 
 <body>
 
-    <!-- BUILDER -->
     <div class="level-panel" id="builder">
         <h1>BUILDER</h1>
-        <div class="subtitle">Create questions</div>
+        <div class="subtitle">Create questions for "Common Capture"</div>
 
         <div class="question-tile">
-            <input id="newQ" placeholder="Question">
+            <input id="setTitle" placeholder="Set Title (e.g. Classic History)">
+            <input id="newQ" placeholder="Question Text">
             <input id="newA" placeholder="Answer">
-            <div class="feedback" id="builderFeedback"></div>
+            <div id="builderFeedback" style="color:var(--accent-yellow); font-size:0.8rem;"></div>
         </div>
 
-        <button class="btn-action" onclick="addQuestion()">Add Question</button>
+        <button style="width:100%" onclick="addQuestion()">Add Question</button>
 
-        <div class="subtitle" style="margin-top:25px">Current Questions</div>
-        <div class="list" id="questionList"></div>
+        <div class="list" id="questionList">No questions yet.</div>
 
-        <div style="margin-top:20px">
-            <button class="btn-action" onclick="importQuestions()">Import</button>
-            <button class="btn-action" onclick="exportQuestions()">Export</button>
+        <div class="btn-group">
+            <button onclick="importQuestions()">Import JSON</button>
+            <button onclick="exportQuestions()">Export JSON</button>
         </div>
 
-        <div class="subtitle" style="font-size:.75rem; opacity:.6; margin-top:10px">
-            This WILL replace any questions currently in the builder.
-            If you have multiple files, merge them before importing.
-        </div>
-
-        <div style="margin-top:25px">
-            <button class="btn-action" onclick="startGame()">Start</button>
-        </div>
-
-        <div style="margin-top:15px">
-            <button class="btn-action" onclick="location.href='CCMenu1.html'">Main Menu</button>
+        <div class="btn-group">
+            <button style="background:#444" onclick="location.href='CCMenu1.html'">Menu</button>
+            <button style="background:var(--accent-yellow); color:black" onclick="startGame()">Play Set (export first!)</button>
         </div>
     </div>
 
-    <!-- GAME -->
     <div class="level-panel hidden" id="game">
-        <h1 id="levelHeading">LEVEL</h1>
-        <div class="subtitle">Complete the task</div>
+        <h1 id="levelHeading">LEVEL 1</h1>
+        <div class="subtitle" id="questionText">Loading...</div>
 
         <div class="question-tile">
-            <p id="questionText"></p>
-            <input id="answerInput" placeholder="Type your answer">
-            <div class="feedback" id="feedback"></div>
+            <input id="answerInput" placeholder="Your Answer">
+            <div id="feedback" style="color:var(--accent-yellow); font-weight:bold;"></div>
         </div>
 
-        <div class="buttons">
-            <button class="btn-action" id="retryBtn">Retry</button>
-            <button class="btn-action" id="submitBtn">Submit</button>
+        <div class="btn-group">
+            <button style="background:#444" onclick="location.reload()">Quit</button>
+            <button onclick="checkAnswer()">Submit</button>
         </div>
     </div>
 
-    <!-- COMPLETE -->
     <div class="complete-overlay" id="completeOverlay">
         <div class="level-panel">
-            <h1 id="completeHeading">COMPLETE</h1>
-            <button class="btn-action" onclick="next()">Next</button>
+            <h1>CLEARED</h1>
+            <button onclick="nextLevel()" style="width:100%">Continue</button>
         </div>
     </div>
 
     <script>
-        let questions = {};
-        let current = 1;
+        // Use an array to match your Preset structure exactly
+        let activePreset = {
+            title: "Custom Set",
+            color1: "#9b5cff",
+            color2: "#ffd84d",
+            levels: []
+        };
+        
+        let currentLevelIdx = 0;
 
-        /* BUILDER */
+        /* --- BUILDER LOGIC --- */
         function addQuestion() {
-            const q = newQ.value.trim();
-            const a = newA.value.trim();
-            if (!q || !a) {
-                builderFeedback.textContent = "Both fields required.";
-                return;
-            }
-            const id = Object.keys(questions).length + 1;
-            questions[id] = { q, a };
-            newQ.value = newA.value = "";
-            builderFeedback.textContent = "";
+            const q = document.getElementById('newQ').value.trim();
+            const a = document.getElementById('newA').value.trim();
+            
+            if (!q || !a) return;
+
+            activePreset.levels.push({ q, a });
+            document.getElementById('newQ').value = "";
+            document.getElementById('newA').value = "";
             renderList();
         }
 
         function renderList() {
-            questionList.innerHTML = "";
-            Object.values(questions).forEach((x, i) => {
-                questionList.innerHTML += `${i + 1}. ${x.q}<br><span style="opacity:.6">→ ${x.a}</span><br><br>`;
-            });
+            const list = document.getElementById('questionList');
+            if (activePreset.levels.length === 0) {
+                list.innerHTML = "No questions yet.";
+                return;
+            }
+            list.innerHTML = activePreset.levels.map((lvl, i) => 
+                `<div>${i+1}. ${lvl.q} <span style="opacity:0.5">(${lvl.a})</span></div>`
+            ).join('<br>');
         }
 
         function exportQuestions() {
-            const blob = new Blob([JSON.stringify(questions, null, 2)], { type: "application/json" });
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(blob);
-            a.download = "questions.ccq";
-            a.click();
+            if (activePreset.levels.length === 0) return alert("Add questions first!");
+            
+            // Set the title from the input or default
+            const titleInput = document.getElementById('setTitle').value.trim();
+            if(titleInput) activePreset.title = titleInput;
+
+            const blob = new Blob([JSON.stringify(activePreset, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${activePreset.title.replace(/\s+/g, '_')}.json`;
+            link.click();
         }
 
         function importQuestions() {
             const input = document.createElement("input");
             input.type = "file";
-            input.onchange = () => {
+            input.accept = ".json";
+            input.onchange = e => {
                 const reader = new FileReader();
-                reader.onload = e => {
-                    questions = JSON.parse(e.target.result);
+                reader.onload = event => {
+                    const data = JSON.parse(event.target.result);
+                    // Standardize: if it has .levels, use it. If not, assume it's an array.
+                    activePreset = {
+                        title: data.title || "Imported Set",
+                        color1: data.color1 || "#9b5cff",
+                        color2: data.color2 || "#ffd84d",
+                        levels: data.levels || []
+                    };
+                    document.getElementById('setTitle').value = activePreset.title;
                     renderList();
                 };
-                reader.readAsText(input.files[0]);
+                reader.readAsText(e.target.files[0]);
             };
             input.click();
         }
 
+        /* --- TEST PLAY LOGIC --- */
         function startGame() {
-            if (!questions[1]) return alert("Add at least one question.");
-            builder.classList.add("hidden");
-            game.classList.remove("hidden");
-            load();
+            if (activePreset.levels.length === 0) return alert("No levels to play.");
+            document.getElementById('builder').classList.add('hidden');
+            document.getElementById('game').classList.remove('hidden');
+            currentLevelIdx = 0;
+            loadLevel();
         }
 
-        /* GAME */
-        function load() {
-            levelHeading.textContent = `LEVEL ${current}`;
-            questionText.textContent = questions[current].q;
-            answerInput.value = "";
-            feedback.textContent = "";
-            submitBtn.disabled = false;
+        function loadLevel() {
+            const lvl = activePreset.levels[currentLevelIdx];
+            document.getElementById('levelHeading').textContent = `LEVEL ${currentLevelIdx + 1}`;
+            document.getElementById('questionText').textContent = lvl.q;
+            document.getElementById('answerInput').value = "";
+            document.getElementById('feedback').textContent = "";
         }
 
-        submitBtn.onclick = () => {
-            if (answerInput.value.trim() === questions[current].a) {
-                completeHeading.textContent = `LEVEL ${current} COMPLETE`;
-                completeOverlay.classList.add("active");
+        function checkAnswer() {
+            const input = document.getElementById('answerInput').value.trim();
+            const correct = activePreset.levels[currentLevelIdx].a;
+
+            if (input.toLowerCase() === correct.toLowerCase()) {
+                document.getElementById('completeOverlay').classList.add('active');
             } else {
-                feedback.textContent = "Wrong answer. Hit Retry.";
-                submitBtn.disabled = true;
+                document.getElementById('feedback').textContent = "INCORRECT. TRY AGAIN.";
             }
-        };
+        }
 
-        retryBtn.onclick = () => {
-            answerInput.value = "";
-            feedback.textContent = "";
-            submitBtn.disabled = false;
-        };
-
-        function next() {
-            completeOverlay.classList.remove("active");
-            current++;
-            if (!questions[current]) {
-                alert("All questions complete.");
+        function nextLevel() {
+            document.getElementById('completeOverlay').classList.remove('active');
+            currentLevelIdx++;
+            if (currentLevelIdx < activePreset.levels.length) {
+                loadLevel();
+            } else {
+                alert("SET COMPLETE!");
                 location.reload();
-                return;
             }
-            load();
         }
     </script>
-
 </body>
-
 </html>
