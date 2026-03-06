@@ -1,0 +1,11 @@
+{
+  "title": "COMMAND BOX, NO LEVELS.",
+  "color1": "#0077ff",
+  "color2": "#0077ff",
+  "levels": [
+    {
+      "q": "Type a valid command. Type 'BRD' to move to credits.",
+      "a": "BRD"
+    }
+  ]
+}
