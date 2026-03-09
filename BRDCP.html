@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BRD Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --accent-red: #ff1f1f;
+            --accent-blue: #0077ff;
+            --glow-red: rgba(255, 31, 31, 0.4);
+            --glow-blue: rgba(0, 119, 255, 0.4);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            background-image: radial-gradient(circle at 0% 0%, var(--glow-red) 0%, transparent 40%),
+                              radial-gradient(circle at 100% 100%, var(--glow-blue) 0%, transparent 40%);
+            color: white;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Based on your .level-panel */
+        .terminal-panel {
+            width: 600px;
+            max-width: 95%;
+            height: 450px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+            animation: panelIn 0.6s ease-out;
+        }
+
+        /* Terminal History Area */
+        #output {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            font-family: 'Consolas', 'monaco', monospace;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #e0e0e0;
+            padding-right: 10px;
+        }
+
+        /* The Input Row */
+        .input-line {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .prompt {
+            color: var(--accent-blue);
+            font-family: monospace;
+            font-weight: bold;
+            margin-right: 10px;
+            user-select: none;
+        }
+
+        input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: 'Consolas', monospace;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .log-entry { margin-bottom: 4px; }
+        .system-msg { color: var(--accent-blue); opacity: 0.8; }
+
+        /* Scrollbar Styling to match your theme */
+        #output::-webkit-scrollbar { width: 4px; }
+        #output::-webkit-scrollbar-track { background: transparent; }
+        #output::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+
+        @keyframes panelIn {
+            from { opacity: 0; transform: scale(0.94) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="terminal-panel">
+    <div id="output">
+        <div class="log-entry system-msg">This is just a place to navigate with commands.</div>
+        <div class="log-entry">---------------------------------------</div>
+    </div>
+
+    <div class="input-line">
+        <span class="prompt">></span>
+        <input type="text" id="termInput" autofocus spellcheck="false" autocomplete="off">
+    </div>
+</div>
+
+<script>
+    const termInput = document.getElementById('termInput');
+    const output = document.getElementById('output');
+    
+    // --- State Variables (Matching your Loader) ---
+    const params = new URLSearchParams(location.search);
+    let requestedPreset = params.get("preset") || params.get("p");
+    let currentLevel = parseInt(params.get("l")) || 1;
+    let preset = null;
+    let TOTAL_LEVELS = 0;
+
+    // Focus input on click
+    document.addEventListener('click', () => termInput.focus());
+
+    // Load Data (Your original fetch logic)
+    fetch("presets/index.json")
+        .then(res => res.json())
+        .then(presetList => {
+            if (!requestedPreset || !presetList.includes(requestedPreset)) {
+                printToTerminal("ERROR: Invalid Preset.", "error-msg");
+                return;
+            }
+            return fetch(`presets/${requestedPreset}`);
+        })
+        .then(res => res.json())
+        .then(data => {
+            preset = data;
+            TOTAL_LEVELS = preset.levels.length;
+            printToTerminal(`PRESET LOADED: ${preset.title || requestedPreset}`, "system-msg");
+            printToTerminal(`LEVEL ${currentLevel}: ${preset.levels[currentLevel-1].q}`);
+        })
+        .catch(err => printToTerminal("An error has stolen our signal. Remember, commands can be used inside most level text boxes..", "error-msg"));
+
+    // Event Listener
+    termInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = termInput.value.trim();
+            if (val) processInput(val);
+            termInput.value = '';
+        }
+    });
+
+    function printToTerminal(text, className = "") {
+        const div = document.createElement('div');
+        div.className = `log-entry ${className}`;
+        div.textContent = text;
+        output.appendChild(div);
+        output.scrollTop = output.scrollHeight;
+    }
+
+    function processInput(input) {
+        printToTerminal(`> ${input}`, "user-typed");
+
+        // 1. Check Dev Commands
+        if (handleDevCommands(input)) return;
+
+        // 2. Check Game Logic
+        if (!preset) return;
+        const correctAnswer = preset.levels[currentLevel - 1].a;
+
+        if (input === correctAnswer) {
+            printToTerminal("ACCESS GRANTED. PROCEEDING...", "success-msg");
+            setTimeout(() => jumpTo(currentLevel + 1), 1000);
+        } else if (input.toLowerCase() === "help") {
+            printToTerminal("SYSTEM COMMANDS: HELP, CLEAR, BRDNEXT, BRDPREV, BRDSKIP[n], BRDMOVE[p][l]", "system-msg");
+        } else if (input.toLowerCase() === "clear") {
+            output.innerHTML = '';
+        } else {
+            printToTerminal("ACCESS DENIED: Incorrect Credentials.", "error-msg");
+        }
+    }
+
+    // --- NAVIGATION (Your original logic) ---
+    function jumpTo(level) {
+        if (level < 1) return;
+        if (level > TOTAL_LEVELS) {
+            location.href = "BRDCred+Specials.html";
+            return;
+        }
+        location.href = `BRDCP.html?p=${requestedPreset}&l=${level}`;
+    }
+
+    // --- DEV COMMANDS (Your original logic) ---
+    function handleDevCommands(input) {
+        const v = input.toUpperCase();
+
+        if (v === "BRDNEXT") {
+            printToTerminal("FORCING BYPASS...", "system-msg");
+            setTimeout(() => jumpTo(currentLevel + 1), 500);
+            return true;
+        }
+        if (v === "BRDPREV") {
+            jumpTo(currentLevel - 1);
+            return true;
+        }
+        if (v.startsWith("BRDSKIP")) {
+            const t = parseInt(v.replace("BRDSKIP", ""));
+            if (!isNaN(t)) jumpTo(t);
+            return true;
+        }
+        if (v === "BRDBUILD") {
+            location.href = "BRDBuilder.html";
+            return true;
+        }
+        if (v.startsWith("BRDMOVE")) {
+            // ... Simplified for this terminal view
+            const raw = v.replace("BRDMOVE", "");
+            const levelMatch = raw.match(/\d+/);
+            if (levelMatch) jumpTo(parseInt(levelMatch[0]));
+            return true;
+        }
+        return false;
+    }
+</script>
+
+</body>
+</html>
