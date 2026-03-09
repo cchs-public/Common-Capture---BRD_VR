@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BRD Terminal</title>
+    <title>Command Prompt</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         :root {
@@ -26,52 +26,43 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
         }
 
-        /* Based on your .level-panel */
         .terminal-panel {
-            width: 600px;
+            width: 550px;
             max-width: 95%;
-            height: 450px;
+            height: 400px;
             padding: 25px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 14px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
-            animation: panelIn 0.6s ease-out;
         }
 
-        /* Terminal History Area */
         #output {
             flex-grow: 1;
             overflow-y: auto;
             margin-bottom: 15px;
-            font-family: 'Consolas', 'monaco', monospace;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            color: #e0e0e0;
-            padding-right: 10px;
+            font-family: 'Consolas', monospace;
+            font-size: 1rem;
+            color: #efefef;
         }
 
-        /* The Input Row */
         .input-line {
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
-            padding: 12px;
+            padding: 10px 15px;
         }
 
         .prompt {
-            color: var(--accent-blue);
-            font-family: monospace;
+            color: #888;
+            margin-right: 12px;
             font-weight: bold;
-            margin-right: 10px;
-            user-select: none;
         }
 
         input {
@@ -79,36 +70,29 @@
             background: transparent;
             border: none;
             color: white;
-            font-family: 'Consolas', monospace;
+            font-family: inherit;
             font-size: 1rem;
             outline: none;
         }
 
-        .log-entry { margin-bottom: 4px; }
-        .system-msg { color: var(--accent-blue); opacity: 0.8; }
+        .log-entry { margin-bottom: 5px; }
+        .error-text { color: var(--accent-red); }
+        .system-text { color: var(--accent-blue); }
 
-        /* Scrollbar Styling to match your theme */
         #output::-webkit-scrollbar { width: 4px; }
-        #output::-webkit-scrollbar-track { background: transparent; }
-        #output::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
-
-        @keyframes panelIn {
-            from { opacity: 0; transform: scale(0.94) translateY(10px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        #output::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <div class="terminal-panel">
     <div id="output">
-        <div class="log-entry system-msg">This is just a place to navigate with commands.</div>
-        <div class="log-entry">---------------------------------------</div>
+        <div class="log-entry">Use commands here. (or in a level textbox)</div>
     </div>
 
     <div class="input-line">
         <span class="prompt">></span>
-        <input type="text" id="termInput" autofocus spellcheck="false" autocomplete="off">
+        <input type="text" id="termInput" autofocus autocomplete="off" spellcheck="false">
     </div>
 </div>
 
@@ -116,45 +100,35 @@
     const termInput = document.getElementById('termInput');
     const output = document.getElementById('output');
     
-    // --- State Variables (Matching your Loader) ---
+    // --- State Management ---
     const params = new URLSearchParams(location.search);
-    let requestedPreset = params.get("preset") || params.get("p");
+    let requestedPreset = params.get("p") || params.get("preset");
     let currentLevel = parseInt(params.get("l")) || 1;
     let preset = null;
     let TOTAL_LEVELS = 0;
 
-    // Focus input on click
-    document.addEventListener('click', () => termInput.focus());
+    // Load Data
+    if (requestedPreset) {
+        fetch(`presets/${requestedPreset}`)
+            .then(res => res.json())
+            .then(data => {
+                preset = data;
+                TOTAL_LEVELS = preset.levels.length;
+                print("Level data loaded.");
+                print(`Current Question: ${preset.levels[currentLevel-1].q}`);
+            })
+            .catch(() => print("Error loading level.", "error-text"));
+    }
 
-    // Load Data (Your original fetch logic)
-    fetch("presets/index.json")
-        .then(res => res.json())
-        .then(presetList => {
-            if (!requestedPreset || !presetList.includes(requestedPreset)) {
-                printToTerminal("ERROR: Invalid Preset.", "error-msg");
-                return;
-            }
-            return fetch(`presets/${requestedPreset}`);
-        })
-        .then(res => res.json())
-        .then(data => {
-            preset = data;
-            TOTAL_LEVELS = preset.levels.length;
-            printToTerminal(`PRESET LOADED: ${preset.title || requestedPreset}`, "system-msg");
-            printToTerminal(`LEVEL ${currentLevel}: ${preset.levels[currentLevel-1].q}`);
-        })
-        .catch(err => printToTerminal("An error has stolen our signal. Remember, commands can be used inside most level text boxes..", "error-msg"));
-
-    // Event Listener
     termInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             const val = termInput.value.trim();
-            if (val) processInput(val);
+            if (val) processCommand(val);
             termInput.value = '';
         }
     });
 
-    function printToTerminal(text, className = "") {
+    function print(text, className = "") {
         const div = document.createElement('div');
         div.className = `log-entry ${className}`;
         div.textContent = text;
@@ -162,29 +136,26 @@
         output.scrollTop = output.scrollHeight;
     }
 
-    function processInput(input) {
-        printToTerminal(`> ${input}`, "user-typed");
+    function processCommand(input) {
+        print(`> ${input}`);
 
-        // 1. Check Dev Commands
+        // Check Dev Commands
         if (handleDevCommands(input)) return;
 
-        // 2. Check Game Logic
-        if (!preset) return;
-        const correctAnswer = preset.levels[currentLevel - 1].a;
-
-        if (input === correctAnswer) {
-            printToTerminal("ACCESS GRANTED. PROCEEDING...", "success-msg");
-            setTimeout(() => jumpTo(currentLevel + 1), 1000);
-        } else if (input.toLowerCase() === "help") {
-            printToTerminal("SYSTEM COMMANDS: HELP, CLEAR, BRDNEXT, BRDPREV, BRDSKIP[n], BRDMOVE[p][l]", "system-msg");
-        } else if (input.toLowerCase() === "clear") {
-            output.innerHTML = '';
-        } else {
-            printToTerminal("ACCESS DENIED: Incorrect Credentials.", "error-msg");
+        // Check Answer
+        if (preset) {
+            const correct = preset.levels[currentLevel - 1].a;
+            if (input === correct) {
+                print("Correct. Loading next...", "system-text");
+                setTimeout(() => jumpTo(currentLevel + 1), 800);
+            } else if (input.toLowerCase() === "clear") {
+                output.innerHTML = '';
+            } else {
+                print("Incorrect input.", "error-text");
+            }
         }
     }
 
-    // --- NAVIGATION (Your original logic) ---
     function jumpTo(level) {
         if (level < 1) return;
         if (level > TOTAL_LEVELS) {
@@ -194,37 +165,21 @@
         location.href = `BRDCP.html?p=${requestedPreset}&l=${level}`;
     }
 
-    // --- DEV COMMANDS (Your original logic) ---
     function handleDevCommands(input) {
         const v = input.toUpperCase();
-
-        if (v === "BRDNEXT") {
-            printToTerminal("FORCING BYPASS...", "system-msg");
-            setTimeout(() => jumpTo(currentLevel + 1), 500);
-            return true;
-        }
-        if (v === "BRDPREV") {
-            jumpTo(currentLevel - 1);
-            return true;
-        }
+        if (v === "BRDNEXT") { jumpTo(currentLevel + 1); return true; }
+        if (v === "BRDPREV") { jumpTo(currentLevel - 1); return true; }
         if (v.startsWith("BRDSKIP")) {
             const t = parseInt(v.replace("BRDSKIP", ""));
             if (!isNaN(t)) jumpTo(t);
             return true;
         }
-        if (v === "BRDBUILD") {
-            location.href = "BRDBuilder.html";
-            return true;
-        }
-        if (v.startsWith("BRDMOVE")) {
-            // ... Simplified for this terminal view
-            const raw = v.replace("BRDMOVE", "");
-            const levelMatch = raw.match(/\d+/);
-            if (levelMatch) jumpTo(parseInt(levelMatch[0]));
-            return true;
-        }
+        if (v === "BRDBUILD") { location.href = "BRDBuilder.html"; return true; }
         return false;
     }
+
+    // Autofocus
+    document.addEventListener('click', () => termInput.focus());
 </script>
 
 </body>
