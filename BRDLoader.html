@@ -70,6 +70,11 @@ const params = new URLSearchParams(location.search);
 let requestedPreset = params.get("preset") || params.get("p");
 let currentLevel = parseInt(params.get("l")) || 1;
 
+// Special preset redirect
+if (requestedPreset === "CommandPrompt.json") {
+    location.href = "BRDCP.html";
+}
+    
 let preset = null;
 let TOTAL_LEVELS = 0;
 
